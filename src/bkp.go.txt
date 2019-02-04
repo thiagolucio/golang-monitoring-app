@@ -1,0 +1,173 @@
+package main
+
+import (
+	"fmt"
+	//"reflect"
+)
+
+func main() {
+
+	exibeIntro()
+
+	fmt.Println("1 - Iniciar Monitoramento")
+	fmt.Println("2 - Exibir Logs")
+	fmt.Println("3 - Saír")
+
+	leComando()
+
+	// if comando == 1 {
+	// 	fmt.Println("Monitorando...")
+
+	// } else if comando == 2 {
+	// 	fmt.Println("Exibindo Logs...")
+
+	// } else if comando == 3 {
+	// 	fmt.Println("Saindo")
+
+	// } else {
+	// 	fmt.Println("Esta opção não existe!")
+	// }
+
+	comando := leComando()
+
+	//refatoramento do if com switch
+	switch comando {
+	case 1:
+		fmt.Println("Monitorando...")
+	case 2:
+		fmt.Println("Exibindo Logs...")
+	case 3:
+		fmt.Println("Saindo...")
+	default:
+		fmt.Println("Esta opção não existe!")
+	}
+
+}
+
+func exibeIntro() {
+	nome := "Monitoserv"
+	versao := 1.1
+	// var versao float32 = 1.1 - também pode ser declarado de forma verbosa caso deseje
+	fmt.Println("Monitoramento de Serviços", nome)
+	fmt.Println("Este sistema está na versão", versao)
+	// fmt.Println("O tipo de variável versao é", reflect.TypeOf(versao))
+}
+
+func leComando() int {
+	var comandoLido int
+	// Scanf - captura do input do usuario, o %d% - é o modificador da var comando, &comando - O & indica o endereço onde será guardada a var comando
+	// fmt.Scanf("%d", &comando)
+	// refatoramento do codigo pra ficar mais limpo abaixo pois ele já sabe que tipo de variável está recebendo. Está declarada antes.
+	fmt.Scan(&comandoLido)
+	fmt.Println("O comando escolhido foi", comandoLido, "na posicao de memória", &comandoLido)
+
+	return comandoLido
+}
+
+
+
+//exemplo de funcao que retorna mais de um valor
+
+nome, idade := devolveNomeIdade()
+
+fmt.Println("meu nome é", nome, "e tenho", idade, "anos")
+
+func devolveNomeIdade() (string, int) {
+	nome := "Thiago"
+	idade := 45
+	return nome, idade
+}
+
+//Quando desejamos ignorar uma das variaveis podemos utilizar o _ 
+_, idade := devolveNomeIdade()
+fmt.Println("Tenho", idade, "anos")
+
+
+
+
+
+
+
+// Diferença entre Slices e Array no Golang:
+
+Array tem tamanho definido, tem de ser declarado o tamanho
+Slices não possui tamanho definido, pode ser sem indicação de tamanho
+
+
+	//Declaracao de array - O Array será criado com as 4 posicoes mesmo que nao tenham sido declaradas todas as 4
+	var sites [4]string
+	sites[0] = "http://www.4effect.com.br/"
+	sites[1] = "http://www.thiagolucio.com.br/"
+	sites[2] = "http://www.radarturismojf.com.br/"
+	sites[3] = "http://www.adelmoral.com.br/"
+
+	fmt.Println(sites)
+
+
+	//Declaracao de Slices - o Slices cria um array com as posicoes informadas 
+	func exibeNomesSlices() {
+		nomes:= []string{"Douglas","Jeremias","Salomé"}
+		fmt.Println(nomes)
+		fmt.Println(reflect.TypeOf(nomes)) //mostrar o tipo de objeto se array ou se slices
+		fmt.Println("Omeu slice tem", len(nomes)) //usando o len para mostrar o tamanho do array
+		fmt.Println("Omeu slice tem", cap(nomes)) //usando o cap para mostrar a capacidade do array
+	}
+
+	//Com slices o Array se torna dinâmico de forma que pode ser manipulado por exemplo adicionando um novo nome ... exemplo:
+	nomes = append(nomes, "Aparecida")
+
+
+	//Para um FOR podemos escrever ...
+
+		for i := 0; i < len(nomeArray); i++ {
+		fmt.Println(nomeArray[i])
+	}
+
+	//Ou podemos simplificar... usando o Range do golang
+	for i, site := range nomeArray {
+		fmt.Println(nomeArray)
+	}
+
+
+
+//LENDO ARQUIVOS DE TEXTO (OU OUTROS) E SEUS CONTEUDOS
+
+	arquivo, err := os.Open("servicos.txt") //usa o os.Open para abrir o arquivo de texto
+	arquivo, err := ioutil.ReadFile("servicos.txt") //usa o ioutil.ReadFile  da biblioteca "io/ioutil" para ler o arquivo (o que tem dentro dele). Somente leitura sem conseguir manipular os dados dentro do arquivo como por exemplo ler apenas as duas primeiras linhas do arquivo e ignorar o resto
+	//neste segundo caso usando o ReadFile é necessário retornar o arquivo lido como string pois o arquivo dentro da string para converter os bytes em texto contido dentro do arquivo.
+	// fmt.Println(string(arquivo))
+
+
+//utilizando o os.OpenFile para criar o arquivo logs.txt se ele não existir. Juntamente damos a 
+- permissão para ler e escrever no arquivo RDWR
+- permissão para  criar o arquivo O_CREATE 
+- permissão para escrever sempre na ultima linha do arquivo 
+- permissao para o sistema manipular o arquivo 0666
+arquivo, err := os.OpenFile("logs.txt", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+
+
+Obs: Vale muito mais a pena usar Slices do que Array até mesmo por causa do tamanho dinamico nao utilizando 
+mais espaço e posicoes do que o necessario naquele momento de sua aplicacao
+
+
+
+A biblioteca IOUTIL:
+
+O ioutil é mais sofisticado porque ele com o ReadFile abre o arquivo le ele todo e devolve somente um array de bytes. Exemplo:
+
+arquivo, err := ioutil.ReadFile("logs.txt")
+
+
+//Para rodar a aplicacao
+//digita go build <nome app>.go na pasta e depois digita <nome app> pra rodar a application
+//digita go run <nome app>.go que já compila e executa
+
+/*Observações
+
+O golang so aceita no if expressoes que retornem true/ false (booleanas)
+O golang aceita a instrução for sem nada dentro e com isso rodará infinitamente
+O golang nao possui a instrucao while das outras linguagens
+Todo Array no Golang deve possuir tamanhos fixos. Isso é, vc é obrigado a declarar o tamanho do Array desejado
+No golang não existe o null e sim o nil
+
+*/
